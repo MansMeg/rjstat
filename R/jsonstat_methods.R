@@ -135,7 +135,7 @@ as.json <- function(x, ...){
 
 #' @export
 as.json.jsonstat <- function(x, ...){
-    jsonlite::toJSON(unbox_jsonstat(x), na = "null", pretty = TRUE, digits = parse_digits(x$value), ...)
+    jsonlite::toJSON(unbox(x), na = "null", pretty = TRUE, digits = parse_digits(x$value), ...)
 }
 
 parse_digits <-function(x){
@@ -148,7 +148,29 @@ parse_digits <-function(x){
     }
 }
 
-unbox_jsonstat <- function(x){
+#' Unbox generic function
+#'
+#' @details
+#' This is a generic function to unbox more general objects,
+#' such as \code{jsonstat} objects.
+#' See \code{\link[jsonlite]{unbox}} for mor general information.
+#'
+#' @param x an object to unbox
+#'
+#' @seealso \code{\link[jsonlite]{unbox}}
+#'
+#' @export
+unbox <- function(x){
+    UseMethod("unbox")
+}
+
+#' @export
+unbox.default <- function(x){
+    jsonlite::unbox(x)
+}
+
+#' @export
+unbox.jsonstat <- function(x){
     x$version <- unbox(x$version)
     x$class <- unbox(x$class)
     if(!is.null(x$label)) x$label <- unbox(x$label)
