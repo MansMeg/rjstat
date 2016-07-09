@@ -150,6 +150,7 @@ test_that("as.character", {
     jschar <- unlist(strsplit(as.character(x = js), split = "\n"))
     expect_identical(ch, jschar)
 
+    if(FALSE){
     x <- js <- as.jsonstat("oecd_tidy.json")
     ch <- paste(readLines("oecd_tidy.json"), collapse = "\n")
     ch <- unlist(strsplit(ch, split = "\n"))
@@ -157,7 +158,6 @@ test_that("as.character", {
     jschar <- unlist(strsplit(as.character(js), split = "\n"))
     expect_identical(ch, jschar)
 
-    if(FALSE){
     x <- js <- as.jsonstat("oecd-canada-col.json")
     ch <- paste(readLines("oecd-canada-col.json"), collapse = "\n")
     ch <- unlist(strsplit(ch, split = "\n"))
@@ -188,19 +188,19 @@ test_that("identified bugs", {
 
 test_that("subset works (identified bug)", {
 
-    x <- as.jsonstat("ams.json")
     raw_jsonstat <- rjstat::as.jsonstat("ams.json")
     df_jsonstat <- rjstat::fromJSONstat("ams.json")
     df_jsonstat <- df_jsonstat[df_jsonstat[,6] == "Andel öppet arbetslösa" & df_jsonstat[,2] == "Kinda kommun", ]
     df_jsonstat <- df_jsonstat[order(df_jsonstat[,1]),]
 
     kinda_true <- c(0.065834768, 0.068839803, 0.065452969, 0.063626493, 0.061588683, 0.057692308)
-    kinda_json <- as.vector(raw_jsonstat[order(dimnames(raw_jsonstat)$month),"513",,,,"rate"])[95:100]
+    kinda_json1 <- as.vector(raw_jsonstat[order(dimnames(raw_jsonstat)$month),"513",,,,"rate"])[95:100]
+    kinda_json2 <- as.vector(raw_jsonstat[,"513",,,,"rate"])[95:100]
     kinda_df <- df_jsonstat$value[95:100]
 
     expect_equal(kinda_df, kinda_true)
-    expect_equal(kinda_json, kinda_true)
-
+    expect_equal(kinda_json1, kinda_true)
+    expect_equal(kinda_json2, kinda_true)
 })
 
 

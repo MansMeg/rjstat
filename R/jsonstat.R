@@ -16,8 +16,9 @@
 as.jsonstat <- function(x){
     x <- fromJSON(x, simplifyDataFrame = FALSE)
     x <- parse_value(x)
-    validate_jsonstat(x)
+    x$dimension <- x$dimension[x$id]
     class(x) <- c(paste0("jsonstat_", x$class), "jsonstat", "list")
+    validate_jsonstat(x)
     x
 }
 
