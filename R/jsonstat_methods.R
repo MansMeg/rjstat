@@ -18,13 +18,17 @@ dim.jsonstat_dataset <- function(x){
 
 #' @export
 dimnames.jsonstat_dataset <- function(x){
-    dn <- lapply(x$dimension,
-                 FUN=function(X) {
-                     idx <- names(X$category$index)
-                     if(is.null(idx)) idx <- names(X$category$label)
-                     idx
-                     })
-    dn[x$id]
+    lapply(x$dimension,
+           FUN=function(X) {
+               if(is.list(X$category$index)){
+                   idx <- names(sort(unlist(X$category$index)))
+               } else if(is.vector(X$category$index)){
+                   idx <- X$category$index
+               } else if(is.null(X$category$index)) {
+                   idx <- names(X$category$label)
+               } else {stop("No dimension index")}
+               idx
+               })
 }
 
 #' @export
@@ -69,7 +73,7 @@ dimnames.jsonstat_dataset <- function(x){
 
 #' @export
 as.array.jsonstat_dataset <- function(x, ...){
-    a <- array(data = x$value, dim = rev(x$size), dimnames = rev(dimnames(x)[x$id]))
+    a <- array(data = x$value, dim = rev(x$size), dimnames = dimnames(x)[rev(x$id)])
     aperm(a, length(dim(a)):1)
 }
 
