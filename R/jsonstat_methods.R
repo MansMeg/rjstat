@@ -33,39 +33,28 @@ dimnames.jsonstat_dataset <- function(x){
 
 #' @export
 `dimnames<-.jsonstat_dataset` <- function (x, value){
-    stopifnot(all(names(value) == names(dimnames(x))))
-    for(i in seq_along(names(value))){ # i <- 2
-        var_name <- names(value)[i]
-        if(length(value[[i]]) == 1){
-            x$dimension[[var_name]]$category$index <- NULL
-            value_exist <- value[[i]] %in% names(x$dimension[[var_name]]$category$label)
-            if(value_exist) {
-                lab <- x$dimension[[var_name]]$category$label[value[[i]]]
-            } else {
-                lab <- list("")
-                names(lab) <- value[[i]]
-            }
-            x$dimension[[var_name]]$category$label <- lab
-        } else {
-            has_label <- !is.null(x$dimension[[var_name]]$category$label)
-            has_index <- !is.null(x$dimension[[var_name]]$category$index)
+    checkmate::assert_set_equal(names(value), names(dimnames(x)), ordered = TRUE)
 
-            if(has_index){
-                idx <- as.list(0:(length(value[[i]])-1))
-                names(idx) <- value[[i]]
-                x$dimension[[var_name]]$category$index <- idx
+    for(i in seq_along(names(value))){ # i <- 4
+        var_name <- names(value)[i]
+        has_label <- !is.null(x$dimension[[var_name]]$category$label)
+        has_index <- !is.null(x$dimension[[var_name]]$category$index)
+
+        if(has_index){
+            idx <- as.list(0:(length(value[[i]])-1))
+            names(idx) <- value[[i]]
+            x$dimension[[var_name]]$category$index <- idx
+        }
+        if(has_label){
+            lab_idx <- names(x$dimension[[var_name]]$category$label) %in% value[[i]]
+            labs <- x$dimension[[var_name]]$category$label[lab_idx]
+            new_labs <- !value[[i]] %in% names(x$dimension[[var_name]]$category$label)
+            if(any(new_labs)) {
+                extra_lab <- as.list(rep("", sum(new_labs)))
+                names(extra_lab) <- value[[i]][new_labs]
+                labs <- c(labs, extra_lab)
             }
-            if(has_label){
-                lab_idx <- names(x$dimension[[var_name]]$category$label) %in% value[[i]]
-                labs <- x$dimension[[var_name]]$category$label[lab_idx]
-                new_labs <- !value[[i]] %in% names(x$dimension[[var_name]]$category$label)
-                if(any(new_labs)) {
-                    extra_lab <- as.list(rep("", sum(new_labs)))
-                    names(extra_lab) <- value[[i]][new_labs]
-                    labs <- c(labs, extra_lab)
-                }
-                x$dimension[[var_name]]$category$label <- labs
-            }
+            x$dimension[[var_name]]$category$label <- labs
         }
     }
     x
