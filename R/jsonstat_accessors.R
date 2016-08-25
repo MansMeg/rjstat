@@ -65,3 +65,28 @@ status <- function(x){
 }
 
 
+
+#' \code{id} accessors of \code{jsonstat} objects
+#'
+#' @description
+#' Access and change \code{id}s of jsonstat objects.
+#'
+#' @param x a \code{jsonstat_dataset} object
+#' @param value a character vector of up to the same length as \code{id(x)}.
+#'
+#' @export
+dimension <- function(x){
+    assert_class(x, "jsonstat_dataset")
+    x$dimension
+}
+
+#' @rdname dimension
+#' @export
+`dimension<-` <- function(x, value){
+    assert_class(x, "jsonstat_dataset")
+    x$dimension <- value
+    validate_jsonstat(x)
+    x
+}
+
+
