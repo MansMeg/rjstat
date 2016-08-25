@@ -95,7 +95,6 @@ array_to_jsonstat_helper <- function(jsa){
 #' @export
 `[<-.jsonstat_dataset` <- function(x, i, ..., value){
     jsarray <- as.array(x)
-    jsarray[1,1,3:5] <- 10:12
     jsarray[i, ...] <- value
     subs <- array_to_jsonstat_helper(jsarray)
     x$value <- subs$value
